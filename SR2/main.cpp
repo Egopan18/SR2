@@ -14,7 +14,7 @@ struct Publication
 string readTag(string bookInfo, string tag)
 {
     int start, end;
-    string value;
+    string value = "";
 
     start = bookInfo.find("<" + tag + ">");
     if (start != string::npos)
