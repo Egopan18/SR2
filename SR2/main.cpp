@@ -18,14 +18,9 @@ private:
 	string title;
 	Publication publication;
 public:
-	Book(string fileName)
+	Book(const string &tag)
 	{
 
-		string line;
-		while (!fin.eof())
-		{
-			getline(fin, line);
-		}
 	}
 };
 
@@ -33,13 +28,23 @@ vector<Book> readXml(const string &fileName)
 {
 	vector<Book> books;
 
-	string line;
+	string tag = "", line;
 	ifstream fin;
-			fin.open(fileName);
+	fin.open(fileName);
 
 	while (!fin.eof())
 	{
 		getline(fin, line);
+		if (line.find("<book>") != string::npos)
+		{
+			while (line.find("</book>") == string::npos)
+            {
+                tag += line;
+            }
+
+            Book book(tag);
+            books.push_back(book);
+		}
 	}
 
 	return books;
