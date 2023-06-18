@@ -11,6 +11,22 @@ struct Publication
 	string publisher;
 };
 
+string readTag(string bookInfo, string tag)
+{
+    int start, end;
+    string value;
+
+    start = bookInfo.find("<" + tag + ">");
+    if (start != string::npos)
+    {
+        end = bookInfo.find("</" + tag + ">");
+        value = bookInfo.substr(start, end - start);
+        value.erase(0, value.find(">") + 1);
+    }
+
+    return value;
+}
+
 class Book
 {
 private:
@@ -18,17 +34,20 @@ private:
 	string title;
 	Publication publication;
 public:
-	Book(const string &tag)
+	Book(const string &bookInfo)
 	{
-
-	}
+        author = readTag(bookInfo, "author");
+        title = readTag(bookInfo, "title");
+        publication.year = stoi(readTag(bookInfo, "year"));
+        publication.publisher = readTag(bookInfo, "publisher");
+    }
 };
 
 vector<Book> readXml(const string &fileName)
 {
 	vector<Book> books;
 
-	string tag = "", line;
+	string bookInfo = "", line;
 	ifstream fin;
 	fin.open(fileName);
 
@@ -39,20 +58,22 @@ vector<Book> readXml(const string &fileName)
 		{
 			while (line.find("</book>") == string::npos)
             {
-                tag += line;
+                bookInfo += line;
+                getline(fin, line);
             }
 
-            Book book(tag);
+            Book book(bookInfo);
             books.push_back(book);
 		}
-	}
+        bookInfo.clear();
+    }
 
 	return books;
 }
 
 int main()
 {
-
+    readXml("test.xml");
 
 	return 0;
 }
